@@ -1,9 +1,7 @@
 ####### Variables #######
 
 variable "ami_id" {
-  description = "ID de la AMI"
-  # NOTA: Este ID es de Amazon Linux 2. Si usas Amazon Linux 2023, el comando de user_data cambia.
-  default     = "ami-0440d3b780d96b29d"
+  default     = "ami-0d643189857b024cc"
 }
 
 variable "instance_type" {
@@ -157,22 +155,11 @@ resource "aws_launch_template" "docker_lt" {
     security_groups             = [aws_security_group.instance_sg.id]
   }
 
-  # Se añade 'sleep 5' para asegurar que el daemon de Docker esté listo
-  # Se añade 'docker pull' explícito por seguridad
   user_data = base64encode(<<-EOF
               #!/bin/bash
-              yum update -y
-              amazon-linux-extras install docker -y
               service docker start
-              systemctl enable docker
-              usermod -a -G docker ec2-user
-              
-              # Esperamos a que el servicio levante correctamente
-              sleep 5
+              systemctl enable Docker
 
-              # Descargamos y corremos el contenedor
-              # Esto asegura que si la imagen es nueva, la baje correctamente
-              docker pull ${var.docker_image}:${var.image_tag}
               docker run -d -p 80:80 --restart always --name app ${var.docker_image}:${var.image_tag}
               EOF
   )
