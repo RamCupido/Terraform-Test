@@ -1,0 +1,17 @@
+# Directorios locales de Terraform (Aquí es donde están los binarios pesados)
+**/.terraform/*
+
+# Archivos de estado (IMPORTANTE: Contienen información sensible y secretos)
+*.tfstate
+*.tfstate.*
+
+# Archivos de logs de crasheos
+crash.log
+
+# Archivos de variables con secretos (Si usas alguno en el futuro)
+*.tfvars
+*.tfvars.json
+
+# Archivos de configuración de CLI locales
+.terraformrc
+terraform.rc
