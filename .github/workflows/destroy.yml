@@ -1,0 +1,45 @@
+name: Destroy Infrastructure
+
+# Este trigger permite ejecutarlo MANUALMENTE desde la pestaña Actions
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_action:
+        description: 'Escribe "DESTROY" para confirmar'
+        required: true
+        default: ''
+
+env:
+  AWS_REGION: us-east-1
+  DOCKER_IMAGE: augusto573/app-hello-world
+
+jobs:
+  destroy-infra:
+    runs-on: ubuntu-latest
+    # Solo se ejecuta si escribiste DESTROY
+    if: github.event.inputs.confirm_action == 'DESTROY' 
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Destroy
+      # Pasamos variables dummy porque son obligatorias, aunque al destruir no importen tanto
+      run: |
+        terraform destroy -auto-approve \
+        -var="docker_image=${{ env.DOCKER_IMAGE }}" \
+        -var="image_tag=destroying"
