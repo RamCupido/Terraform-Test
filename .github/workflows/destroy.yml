@@ -38,8 +38,5 @@ jobs:
       run: terraform init
 
     - name: Terraform Destroy
-      # Pasamos variables dummy porque son obligatorias, aunque al destruir no importen tanto
       run: |
-        terraform destroy -auto-approve \
-        -var="docker_image=${{ env.DOCKER_IMAGE }}" \
-        -var="image_tag=destroying"
+        terraform destroy
