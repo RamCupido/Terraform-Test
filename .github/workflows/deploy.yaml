@@ -3,11 +3,11 @@ name: Deploy to AWS ASG
 on:
   push:
     branches:
-      - main  # O la rama que uses
+      - main
 
 env:
   AWS_REGION: us-east-1
-  DOCKER_IMAGE: tu_usuario_dockerhub/nombre_repo # <--- CAMBIA ESTO
+  DOCKER_IMAGE: augusto573/app-hello-world
 
 jobs:
   build-and-deploy:
