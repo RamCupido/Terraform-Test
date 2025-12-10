@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "tf-state-uce-apellido-2025"  # <--- PON AQUÍ EL NOMBRE QUE CREASTE
+    bucket = "tf-state-uce-riofrio-2025"
     key    = "prod/terraform.tfstate"      # Esto crea una carpeta 'prod' y el archivo dentro
     region = "us-east-1"
   }
