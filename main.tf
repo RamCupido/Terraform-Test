@@ -13,10 +13,6 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = "us-east-1"
-}
-
 ####### Variables #######
 
 variable "ami_id" {
@@ -177,7 +173,7 @@ resource "aws_launch_template" "docker_lt" {
   user_data = base64encode(<<-EOF
               #!/bin/bash
               service docker start
-              systemctl enable Docker
+              systemctl enable docker
 
               docker run -d -p 80:80 --restart always --name app ${var.docker_image}:${var.image_tag}
               EOF
