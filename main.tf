@@ -1,3 +1,22 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+
+  backend "s3" {
+    bucket = "tf-state-uce-apellido-2025"  # <--- PON AQUÍ EL NOMBRE QUE CREASTE
+    key    = "prod/terraform.tfstate"      # Esto crea una carpeta 'prod' y el archivo dentro
+    region = "us-east-1"
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
 ####### Variables #######
 
 variable "ami_id" {
