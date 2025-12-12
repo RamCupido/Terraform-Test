@@ -268,6 +268,25 @@ resource "aws_autoscaling_group" "app_asg" {
   }
 }
 
+####### ASG Policy  #######
+resource "aws_autoscaling_policy" "cpu_policy" {
+  name                   = "${var.server_name}-cpu-policy"
+  autoscaling_group_name = aws_autoscaling_group.app_asg.name
+  policy_type            = "TargetTrackingScaling"
+  
+  # Tiempo de espera antes de volver a evaluar (para que no escale a lo loco)
+  estimated_instance_warmup = 60 
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      # Usamos CPU porque al recibir muchas peticiones HTTP, el CPU sube
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    # Objetivo: Mantener el CPU al 50%
+    target_value = 50.0 
+  }
+}
+
 output "load_balancer_dns" {
   description = "DNS público del Load Balancer"
   value       = aws_lb.app_lb.dns_name
