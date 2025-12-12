@@ -282,8 +282,8 @@ resource "aws_autoscaling_policy" "cpu_policy" {
       # Usamos CPU porque al recibir muchas peticiones HTTP, el CPU sube
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
-    # Objetivo: Mantener el CPU al 50%
-    target_value = 50.0 
+    # Objetivo: Mantener el CPU al 60%
+    target_value = 60.0 
   }
 }
 
