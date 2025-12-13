@@ -8,7 +8,7 @@ terraform {
 
   backend "s3" {
     bucket = "tf-state-uce-riofrio-2025"
-    key    = "prod/terraform.tfstate"      # Esto crea una carpeta 'prod' y el archivo dentro
+    key    = "prod/terraform.tfstate"
     region = "us-east-1"
   }
 }
@@ -21,7 +21,7 @@ variable "ami_id" {
 
 variable "instance_type" {
   description = "Tipo de instancia EC2"
-  default     = "t3.micro"
+  default     = "t2.micro"
 }
 
 variable "server_name" {
@@ -268,13 +268,12 @@ resource "aws_autoscaling_group" "app_asg" {
   }
 }
 
-####### ASG Policy  #######
+####### ASG Policys  #######
 resource "aws_autoscaling_policy" "cpu_policy" {
   name                   = "${var.server_name}-cpu-policy"
   autoscaling_group_name = aws_autoscaling_group.app_asg.name
   policy_type            = "TargetTrackingScaling"
   
-  # Tiempo de espera antes de volver a evaluar (para que no escale a lo loco)
   estimated_instance_warmup = 60 
 
   target_tracking_configuration {
@@ -282,8 +281,23 @@ resource "aws_autoscaling_policy" "cpu_policy" {
       # Usamos CPU porque al recibir muchas peticiones HTTP, el CPU sube
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
-    # Objetivo: Mantener el CPU al 60%
+    # % CPU
     target_value = 60.0 
+  }
+}
+
+resource "aws_autoscaling_policy" "politica_network_in" {
+  name                   = "${var.server_name}-escalado-red-entrada"
+  autoscaling_group_name = aws_autoscaling_group.app_asg.name
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      # Métrica: Tráfico de Red Entrante Promedio
+      predefined_metric_type = "ASGAverageNetworkIn" 
+    }
+
+    target_value = 10000000.0 
   }
 }
 
